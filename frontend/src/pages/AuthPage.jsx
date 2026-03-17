@@ -44,7 +44,7 @@ export default function AuthPage() {
     try {
       const res = await login(email, password)
       addToast(`Bienvenue, ${res.user.name} !`)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {
@@ -58,7 +58,7 @@ export default function AuthPage() {
     try {
       const res = await register(name, regEmail, regPassword, role)
       addToast(`Bienvenue, ${res.user.name} !`)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       addToast(err.message, 'error')
     } finally {

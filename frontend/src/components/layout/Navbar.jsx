@@ -40,8 +40,8 @@ export default function Navbar() {
 
   const NavLinks = ({ mobile = false }) => (
     <>
-      <Link to="/" onClick={closeMenu}
-        className={`${navLinkClass('/')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'}`}>
+      <Link to="/dashboard" onClick={closeMenu}
+        className={`${navLinkClass('/dashboard')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'}`}>
         <LayoutDashboard className="w-4 h-4" /> {t('nav.dashboard')}
       </Link>
       <Link to="/calendar" onClick={closeMenu}
@@ -71,11 +71,11 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3" onClick={closeMenu}>
+          <Link to="/dashboard" className="flex items-center gap-3" onClick={closeMenu}>
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
               <Waves className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-serif font-bold">Apnea Flow</span>
+            <span className="text-2xl font-serif font-bold text-cyan-200">Apnea Flow</span>
           </Link>
 
           {/* Liens desktop */}

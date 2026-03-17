@@ -6,6 +6,15 @@
 //   - Les routes publiques (accès sans être connecté)
 //   - Les routes protégées (redirige vers /login si pas connecté)
 //   - Les routes réservées aux instructeurs
+//
+// ARCHITECTURE DES ROUTES :
+//   /          → LandingPage (public) — redirige vers /dashboard si déjà connecté
+//   /login     → AuthPage (public)
+//   /dashboard → DashboardPage (protégé)
+//   /courses   → CoursesPage (protégé)
+//   /calendar  → CalendarPage (protégé)
+//   /profile   → ProfilePage (protégé)
+//   /create    → CreateCoursePage (instructeur uniquement)
 // ============================================================
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './hooks/useAuth'
@@ -13,12 +22,33 @@ import Layout from './components/layout/Layout'
 import Spinner from './components/ui/Spinner'
 
 // Pages
-import AuthPage       from './pages/AuthPage'
-import DashboardPage  from './pages/DashboardPage'
-import CoursesPage    from './pages/CoursesPage'
-import CalendarPage   from './pages/CalendarPage'
+import LandingPage      from './pages/LandingPage'
+import AuthPage         from './pages/AuthPage'
+import DashboardPage    from './pages/DashboardPage'
+import CoursesPage      from './pages/CoursesPage'
+import CalendarPage     from './pages/CalendarPage'
 import CreateCoursePage from './pages/CreateCoursePage'
-import ProfilePage    from './pages/ProfilePage'
+import ProfilePage      from './pages/ProfilePage'
+
+// ---- COMPOSANT ROUTE LANDING (intelligente) ----
+// Affiche LandingPage si non connecté, redirige vers /dashboard si connecté
+function LandingRoute() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="ocean-bg min-h-screen flex items-center justify-center">
+        <Spinner size={48} />
+      </div>
+    )
+  }
+
+  // Déjà connecté → aller directement au dashboard
+  if (user) return <Navigate to="/dashboard" replace />
+
+  // Pas connecté → afficher la landing page
+  return <LandingPage />
+}
 
 // ---- COMPOSANT ROUTE PROTÉGÉE ----
 // Redirige vers /login si l'utilisateur n'est pas connecté
@@ -39,7 +69,7 @@ function ProtectedRoute({ children, requiredRole }) {
 
   // Rôle insuffisant → redirection vers le dashboard
   if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   // Tout est OK → on rend la page dans le Layout
@@ -49,11 +79,14 @@ function ProtectedRoute({ children, requiredRole }) {
 export default function App() {
   return (
     <Routes>
+      {/* Page d'accueil publique — smart : redirige vers /dashboard si connecté */}
+      <Route path="/" element={<LandingRoute />} />
+
       {/* Route publique */}
       <Route path="/login" element={<AuthPage />} />
 
       {/* Routes protégées — nécessitent d'être connecté */}
-      <Route path="/" element={
+      <Route path="/dashboard" element={
         <ProtectedRoute><DashboardPage /></ProtectedRoute>
       } />
 
@@ -76,7 +109,7 @@ export default function App() {
         </ProtectedRoute>
       } />
 
-      {/* Toute URL inconnue → dashboard */}
+      {/* Toute URL inconnue → landing */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
