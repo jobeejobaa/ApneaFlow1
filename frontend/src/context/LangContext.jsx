@@ -169,6 +169,7 @@ const translations = {
 
     landing: {
       signin:       'Se connecter',
+      signup:       'S\'inscrire',
       introTitle:   'Une plateforme dédiée à l\'apnée',
       introPara1:   'Notre plateforme met en relation des instructeurs d\'apnée qualifiés et des élèves souhaitant découvrir ou progresser dans cette discipline.',
       introPara2:   'Grâce à un système de réservation simple et rapide, chacun peut trouver un cours adapté à son niveau — débutant, intermédiaire ou avancé — et réserver facilement une séance avec un instructeur.',
@@ -339,6 +340,7 @@ const translations = {
 
     landing: {
       signin:       'Sign in',
+      signup:       'Sign up',
       introTitle:   'A platform dedicated to freediving',
       introPara1:   'Our platform connects qualified freediving instructors with students who want to discover or improve in this discipline.',
       introPara2:   'With a simple and fast booking system, everyone can find a course suited to their level — beginner, intermediate, or advanced — and easily book a session with an instructor.',

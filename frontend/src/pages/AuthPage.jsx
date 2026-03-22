@@ -2,7 +2,7 @@
 // AuthPage — Page de connexion / inscription
 // ============================================================
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Waves, LogIn, UserPlus } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
@@ -24,7 +24,11 @@ function AuthLangToggle() {
 }
 
 export default function AuthPage() {
-  const [mode, setMode] = useState('login')
+  // Si l'URL contient ?mode=register, on ouvre directement l'onglet inscription
+  const [searchParams] = useSearchParams()
+  const [mode, setMode] = useState(
+    searchParams.get('mode') === 'register' ? 'register' : 'login'
+  )
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('eleve@apnea.fr')
   const [password, setPassword] = useState('password')
