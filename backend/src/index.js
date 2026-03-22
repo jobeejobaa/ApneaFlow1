@@ -48,6 +48,12 @@ app.use((req, res, next) => {
   next()
 })
 
+// ---- UPLOADS PHOTOS DE PROFIL ----
+// Ce dossier contient les photos uploadées par les utilisateurs
+// Accessible via GET /uploads/user-xxx-timestamp.jpg
+const UPLOADS_DIR = join(__dirname, '../uploads')
+app.use('/uploads', express.static(UPLOADS_DIR))
+
 // ---- FRONTEND STATIQUE (PRODUCTION) ----
 // En dev : le frontend tourne sur Vite (port 5173)
 // En prod : on build React (npm run build) puis Express sert le dossier dist/

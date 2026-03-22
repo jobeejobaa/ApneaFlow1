@@ -127,4 +127,31 @@ export const usersAPI = {
       method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  // POST /api/users/me/photo
+  // Prend un objet File (depuis <input type="file">)
+  // Le convertit en base64 puis l'envoie au serveur
+  uploadPhoto: (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = async () => {
+        try {
+          // reader.result = "data:image/jpeg;base64,/9j/4AAQ..."
+          const result = await apiFetch('/users/me/photo', {
+            method: 'POST',
+            body: JSON.stringify({ photo: reader.result }),
+          })
+          resolve(result)
+        } catch (err) {
+          reject(err)
+        }
+      }
+
+      reader.onerror = () => reject(new Error('Impossible de lire le fichier.'))
+
+      // Convertir le fichier en base64 DataURL
+      reader.readAsDataURL(file)
+    })
+  },
 }

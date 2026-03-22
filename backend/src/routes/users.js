@@ -3,15 +3,26 @@
 //
 // GET  /api/users/me        → Mon profil
 // PUT  /api/users/me        → Modifier mon profil
+// POST /api/users/me/photo  → Uploader une photo de profil (JPG)
 // GET  /api/users           → Liste des utilisateurs (instructeur only)
 // ============================================================
 
 import { Router } from 'express'
 import { z } from 'zod'
+import { writeFileSync, mkdirSync } from 'fs'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
 import { prisma } from '../lib/prisma.js'
 import { authenticate, requireInstructor } from '../middleware/auth.js'
 
 const router = Router()
+
+// Chemin vers le dossier uploads (à la racine du backend)
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const UPLOADS_DIR = join(__dirname, '../../uploads')
+// Créer le dossier s'il n'existe pas encore
+mkdirSync(UPLOADS_DIR, { recursive: true })
 
 // Toutes les routes nécessitent d'être connecté
 router.use(authenticate)
@@ -83,6 +94,64 @@ router.put('/me', async (req, res) => {
     }
     console.error(err)
     res.status(500).json({ error: 'Erreur serveur.' })
+  }
+})
+
+// ---- UPLOAD PHOTO DE PROFIL ----
+// POST /api/users/me/photo
+// Body : { photo: "data:image/jpeg;base64,..." }
+router.post('/me/photo', async (req, res) => {
+  try {
+    const { photo } = req.body
+
+    // Vérifications de base
+    if (!photo || typeof photo !== 'string') {
+      return res.status(400).json({ error: 'Aucune photo reçue.' })
+    }
+
+    // Vérifier que c'est bien un JPEG en base64
+    if (!photo.startsWith('data:image/jpeg;base64,') && !photo.startsWith('data:image/jpg;base64,')) {
+      return res.status(400).json({ error: 'Seuls les fichiers JPG/JPEG sont acceptés.' })
+    }
+
+    // Extraire la partie base64 pure (sans le préfixe "data:image/jpeg;base64,")
+    const base64Data = photo.split(',')[1]
+
+    // Vérification de la taille (~5 Mo max ; base64 est ~33% plus grand que le fichier réel)
+    const sizeInBytes = Buffer.byteLength(base64Data, 'base64')
+    if (sizeInBytes > 5 * 1024 * 1024) {
+      return res.status(400).json({ error: 'La photo dépasse la limite de 5 Mo.' })
+    }
+
+    // Nom de fichier unique basé sur l'ID user + timestamp
+    const filename = `user-${req.user.id}-${Date.now()}.jpg`
+    const filepath = join(UPLOADS_DIR, filename)
+
+    // Écrire le fichier sur le disque
+    writeFileSync(filepath, base64Data, 'base64')
+
+    // Chemin accessible via HTTP
+    const photoUrl = `/uploads/${filename}`
+
+    // Mettre à jour la BDD
+    const updated = await prisma.user.update({
+      where: { id: req.user.id },
+      data: { photoUrl },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        bio: true,
+        photoUrl: true,
+        updatedAt: true,
+      },
+    })
+
+    res.json(updated)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur serveur lors de l\'upload.' })
   }
 })
 
