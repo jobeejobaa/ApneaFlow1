@@ -155,6 +155,73 @@ router.post('/me/photo', async (req, res) => {
   }
 })
 
+// ---- LISTE DES INSTRUCTEURS (accessible à tous les utilisateurs connectés) ----
+// GET /api/users/instructors
+router.get('/instructors', async (req, res) => {
+  try {
+    const instructors = await prisma.user.findMany({
+      where: { role: 'INSTRUCTEUR' },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        photoUrl: true,
+        createdAt: true,
+        _count: {
+          select: { coursesCreated: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+    })
+
+    res.json(instructors)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur serveur.' })
+  }
+})
+
+// ---- PROFIL D'UN INSTRUCTEUR PAR ID (accessible à tous les utilisateurs connectés) ----
+// GET /api/users/instructors/:id
+router.get('/instructors/:id', async (req, res) => {
+  try {
+    const instructor = await prisma.user.findFirst({
+      where: { id: req.params.id, role: 'INSTRUCTEUR' },
+      select: {
+        id: true,
+        name: true,
+        bio: true,
+        photoUrl: true,
+        createdAt: true,
+        coursesCreated: {
+          select: {
+            id: true,
+            title: true,
+            type: true,
+            location: true,
+            date: true,
+            time: true,
+            capacity: true,
+          },
+          orderBy: { date: 'asc' },
+        },
+        _count: {
+          select: { coursesCreated: true },
+        },
+      },
+    })
+
+    if (!instructor) {
+      return res.status(404).json({ error: 'Instructeur introuvable.' })
+    }
+
+    res.json(instructor)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur serveur.' })
+  }
+})
+
 // ---- LISTE DES UTILISATEURS (instructeur) ----
 // GET /api/users
 router.get('/', requireInstructor, async (req, res) => {

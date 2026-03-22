@@ -20,12 +20,24 @@ export const LangContext = createContext(null)
 const translations = {
   fr: {
     nav: {
-      dashboard:  'Dashboard',
-      calendar:   'Calendrier',
-      courses:    'Cours',
-      create:     'Créer',
-      profile:    'Profil',
-      logout:     'Déconnexion',
+      dashboard:   'Dashboard',
+      calendar:    'Calendrier',
+      courses:     'Cours',
+      instructors: 'Instructeurs',
+      create:      'Créer',
+      profile:     'Profil',
+      logout:      'Déconnexion',
+    },
+
+    instructors: {
+      title:       'Nos instructeurs',
+      subtitle:    'Découvrez l\'équipe pédagogique',
+      courses:     'cours',
+      empty:       'Aucun instructeur pour le moment.',
+      noBio:       'Cet instructeur n\'a pas encore renseigné de biographie.',
+      coursesList: 'Cours proposés',
+      noCourses:   'Aucun cours créé pour le moment.',
+      memberSince: 'Membre depuis',
     },
 
     auth: {
@@ -191,12 +203,24 @@ const translations = {
   // ================================================================
   en: {
     nav: {
-      dashboard:  'Dashboard',
-      calendar:   'Calendar',
-      courses:    'Courses',
-      create:     'Create',
-      profile:    'Profile',
-      logout:     'Logout',
+      dashboard:   'Dashboard',
+      calendar:    'Calendar',
+      courses:     'Courses',
+      instructors: 'Instructors',
+      create:      'Create',
+      profile:     'Profile',
+      logout:      'Logout',
+    },
+
+    instructors: {
+      title:       'Our instructors',
+      subtitle:    'Meet the teaching team',
+      courses:     'courses',
+      empty:       'No instructors yet.',
+      noBio:       'This instructor hasn\'t added a bio yet.',
+      coursesList: 'Available courses',
+      noCourses:   'No courses created yet.',
+      memberSince: 'Member since',
     },
 
     auth: {

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Waves, LayoutDashboard, CalendarDays, BookOpen,
-  PlusCircle, User, LogOut, Menu, X
+  PlusCircle, User, LogOut, Menu, X, Users
 } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useLang } from '../../hooks/useLang'
@@ -51,6 +51,10 @@ export default function Navbar() {
       <Link to="/courses" onClick={closeMenu}
         className={`${navLinkClass('/courses')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'}`}>
         <BookOpen className="w-4 h-4" /> {t('nav.courses')}
+      </Link>
+      <Link to="/instructors" onClick={closeMenu}
+        className={`${navLinkClass('/instructors')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'}`}>
+        <Users className="w-4 h-4" /> {t('nav.instructors')}
       </Link>
       {user?.role === 'INSTRUCTEUR' && (
         <Link to="/create" onClick={closeMenu}

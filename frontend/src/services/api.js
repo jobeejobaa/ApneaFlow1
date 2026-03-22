@@ -128,6 +128,12 @@ export const usersAPI = {
       body: JSON.stringify(data),
     }),
 
+  // GET /api/users/instructors — liste de tous les instructeurs
+  getInstructors: () => apiFetch('/users/instructors'),
+
+  // GET /api/users/instructors/:id — détail d'un instructeur + ses cours
+  getInstructor: (id) => apiFetch(`/users/instructors/${id}`),
+
   // POST /api/users/me/photo
   // Prend un objet File (depuis <input type="file">)
   // Le convertit en base64 puis l'envoie au serveur
