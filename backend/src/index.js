@@ -18,6 +18,7 @@ import authRoutes from './routes/auth.js'
 import userRoutes from './routes/users.js'
 import courseRoutes from './routes/courses.js'
 import enrollmentRoutes from './routes/enrollments.js'
+import requestRoutes from './routes/requests.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -68,6 +69,7 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/courses', courseRoutes)
 app.use('/api/enrollments', enrollmentRoutes)
+app.use('/api/requests', requestRoutes)
 
 // Favicon
 app.get('/favicon.ico', (req, res) => res.status(204).end())

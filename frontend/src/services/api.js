@@ -161,3 +161,31 @@ export const usersAPI = {
     })
   },
 }
+
+// ============================================================
+// REQUESTS API — Demandes de cours privées
+// ============================================================
+export const requestsAPI = {
+  // POST /api/requests — élève envoie une demande
+  create: (data) =>
+    apiFetch('/requests', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  // GET /api/requests/sent — mes demandes envoyées (élève)
+  getSent: () => apiFetch('/requests/sent'),
+
+  // GET /api/requests/received — demandes reçues (instructeur)
+  getReceived: () => apiFetch('/requests/received'),
+
+  // GET /api/requests/pending-count — nb en attente (badge navbar)
+  getPendingCount: () => apiFetch('/requests/pending-count'),
+
+  // PATCH /api/requests/:id — instructeur accepte ou refuse
+  respond: (id, status) =>
+    apiFetch(`/requests/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+}

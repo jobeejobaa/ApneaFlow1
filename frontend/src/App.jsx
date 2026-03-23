@@ -30,6 +30,7 @@ import CalendarPage     from './pages/CalendarPage'
 import CreateCoursePage  from './pages/CreateCoursePage'
 import ProfilePage       from './pages/ProfilePage'
 import InstructeursPage  from './pages/InstructeursPage'
+import RequestsPage      from './pages/RequestsPage'
 
 // ---- COMPOSANT ROUTE LANDING (intelligente) ----
 // Affiche LandingPage si non connecté, redirige vers /dashboard si connecté
@@ -105,6 +106,10 @@ export default function App() {
 
       <Route path="/instructors" element={
         <ProtectedRoute><InstructeursPage /></ProtectedRoute>
+      } />
+
+      <Route path="/requests" element={
+        <ProtectedRoute><RequestsPage /></ProtectedRoute>
       } />
 
       {/* Route réservée aux instructeurs */}

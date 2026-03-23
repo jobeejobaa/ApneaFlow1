@@ -45,6 +45,12 @@ enum CourseType {
   NO_LIMITS
 }
 
+enum RequestStatus {
+  PENDING   // En attente de réponse
+  ACCEPTED  // Acceptée par l'instructeur
+  REFUSED   // Refusée par l'instructeur
+}
+
 // ---- MODÈLES ----
 // Chaque modèle = une table dans PostgreSQL
 
@@ -60,8 +66,10 @@ model User {
   updatedAt DateTime @updatedAt             // Mis à jour automatiquement par Prisma
 
   // Relations
-  coursesCreated Course[]     // Un instructeur peut créer plusieurs cours
-  enrollments    Enrollment[] // Un élève peut avoir plusieurs inscriptions
+  coursesCreated   Course[]         // Un instructeur peut créer plusieurs cours
+  enrollments      Enrollment[]     // Un élève peut avoir plusieurs inscriptions
+  sentRequests     CourseRequest[]  @relation("StudentRequests")     // Demandes envoyées (élève)
+  receivedRequests CourseRequest[]  @relation("InstructorRequests")  // Demandes reçues (instructeur)
 
   @@map("users") // Nom de la table en base (convention : snake_case pluriel)
 }
@@ -104,4 +112,27 @@ model Enrollment {
   // Contrainte : un élève ne peut s'inscrire qu'une fois par cours
   @@unique([userId, courseId])
   @@map("enrollments")
+}
+
+// ---- DEMANDES DE COURS PRIVÉES ----
+// Un élève demande un cours personnalisé à un instructeur
+model CourseRequest {
+  id           String        @id @default(uuid())
+  studentId    String
+  instructorId String
+  title        CourseName    // Niveau souhaité (AIDA1, AIDA2, etc.)
+  location     Location      // Lieu souhaité
+  date         String        // Date souhaitée (YYYY-MM-DD)
+  time         String        // Heure souhaitée (HH:MM)
+  message      String?       // Message libre optionnel
+  status       RequestStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  student    User @relation("StudentRequests",    fields: [studentId],    references: [id], onDelete: Cascade)
+  instructor User @relation("InstructorRequests", fields: [instructorId], references: [id], onDelete: Cascade)
+
+  @@map("course_requests")
 }

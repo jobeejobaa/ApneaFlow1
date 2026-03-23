@@ -1,14 +1,15 @@
 // ============================================================
 // Navbar — Barre de navigation + toggle langue FR/EN
 // ============================================================
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   Waves, LayoutDashboard, CalendarDays, BookOpen,
-  PlusCircle, User, LogOut, Menu, X, Users
+  PlusCircle, User, LogOut, Menu, X, Users, MessageSquare
 } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { useLang } from '../../hooks/useLang'
+import { requestsAPI } from '../../services/api'
 
 // Bouton toggle langue
 function LangToggle() {
@@ -30,6 +31,23 @@ export default function Navbar() {
   const { t } = useLang()
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Badge notification : nb de demandes en attente (instructeurs uniquement)
+  const [pendingCount, setPendingCount] = useState(0)
+
+  useEffect(() => {
+    if (user?.role !== 'INSTRUCTEUR') return
+
+    const fetch = () =>
+      requestsAPI.getPendingCount()
+        .then(({ count }) => setPendingCount(count))
+        .catch(() => {})
+
+    fetch()
+    // Rafraîchir toutes les 30 secondes
+    const interval = setInterval(fetch, 30_000)
+    return () => clearInterval(interval)
+  }, [user])
 
   const closeMenu = () => setMenuOpen(false)
 
@@ -55,6 +73,16 @@ export default function Navbar() {
       <Link to="/instructors" onClick={closeMenu}
         className={`${navLinkClass('/instructors')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'}`}>
         <Users className="w-4 h-4" /> {t('nav.instructors')}
+      </Link>
+      <Link to="/requests" onClick={closeMenu}
+        className={`${navLinkClass('/requests')} ${mobile ? 'text-base py-3 border-b border-white/10' : 'text-sm'} relative`}>
+        <MessageSquare className="w-4 h-4" />
+        {t('nav.requests')}
+        {pendingCount > 0 && (
+          <span className="absolute -top-1.5 -right-2 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+            {pendingCount > 9 ? '9+' : pendingCount}
+          </span>
+        )}
       </Link>
       {user?.role === 'INSTRUCTEUR' && (
         <Link to="/create" onClick={closeMenu}
