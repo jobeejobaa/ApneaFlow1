@@ -34,6 +34,70 @@ const updateProfileSchema = z.object({
   photoUrl: z.string().url().optional().nullable(),
 })
 
+// ---- STATS INSTRUCTEUR ----
+// GET /api/users/me/instructor-stats
+// Retourne :
+//   - upcomingCourses : cours à venir (date >= aujourd'hui) avec nb inscrits / capacité
+//   - students        : liste unique des élèves ayant déjà suivi un de ses cours
+router.get('/me/instructor-stats', async (req, res) => {
+  try {
+    if (req.user.role !== 'INSTRUCTEUR') {
+      return res.status(403).json({ error: 'Réservé aux instructeurs.' })
+    }
+
+    const today = new Date().toISOString().split('T')[0] // "YYYY-MM-DD"
+
+    // 1. Cours à venir (date >= aujourd'hui)
+    const upcomingCourses = await prisma.course.findMany({
+      where: {
+        createdById: req.user.id,
+        date: { gte: today },
+      },
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        time: true,
+        location: true,
+        type: true,
+        capacity: true,
+        _count: { select: { enrollments: true } },
+      },
+      orderBy: { date: 'asc' },
+    })
+
+    // 2. Tous les élèves uniques inscrits à au moins un de ses cours (passés ou futurs)
+    const coursesWithStudents = await prisma.course.findMany({
+      where: { createdById: req.user.id },
+      select: {
+        enrollments: {
+          select: {
+            user: {
+              select: { id: true, name: true, photoUrl: true },
+            },
+          },
+        },
+      },
+    })
+
+    // Dédoublonner les élèves par ID
+    const studentsMap = new Map()
+    for (const course of coursesWithStudents) {
+      for (const enrollment of course.enrollments) {
+        studentsMap.set(enrollment.user.id, enrollment.user)
+      }
+    }
+
+    res.json({
+      upcomingCourses,
+      students: Array.from(studentsMap.values()),
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ error: 'Erreur serveur.' })
+  }
+})
+
 // ---- MON PROFIL ----
 // GET /api/users/me
 router.get('/me', async (req, res) => {

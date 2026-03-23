@@ -128,6 +128,9 @@ export const usersAPI = {
       body: JSON.stringify(data),
     }),
 
+  // GET /api/users/me/instructor-stats — cours à venir + élèves uniques (instructeur)
+  getInstructorStats: () => apiFetch('/users/me/instructor-stats'),
+
   // GET /api/users/instructors — liste de tous les instructeurs
   getInstructors: () => apiFetch('/users/instructors'),
 
