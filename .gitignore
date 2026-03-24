@@ -13,9 +13,6 @@ frontend/dist/
 .env.local
 .env.*.local
 
-# Uploads utilisateurs (photos de profil)
-backend/uploads/
-
 # Logs
 *.log
 npm-debug.log*

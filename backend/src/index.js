@@ -33,10 +33,15 @@ const FRONTEND_DIST = join(__dirname, '../../frontend/dist')
 
 // ---- MIDDLEWARES GLOBAUX ----
 
-// CORS : utile si tu appelles l'API depuis un autre port (ex: React dev server)
-// En dev, on accepte tout pour simplifier la vie
+// CORS : autorise le frontend à appeler l'API
+// En dev  : accepte tout (localhost:5173)
+// En prod : accepte uniquement le domaine Vercel défini dans FRONTEND_URL
+const allowedOrigins = process.env.FRONTEND_URL
+  ? [process.env.FRONTEND_URL]
+  : true // en dev on accepte tout
+
 app.use(cors({
-  origin: true,   // Accepte toutes les origines en développement
+  origin: allowedOrigins,
   credentials: true,
 }))
 
