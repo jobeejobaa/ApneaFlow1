@@ -3,26 +3,16 @@
 //
 // GET  /api/users/me        → Mon profil
 // PUT  /api/users/me        → Modifier mon profil
-// POST /api/users/me/photo  → Uploader une photo de profil (JPG)
+// POST /api/users/me/photo  → Uploader une photo de profil (base64 en BDD)
 // GET  /api/users           → Liste des utilisateurs (instructeur only)
 // ============================================================
 
 import { Router } from 'express'
 import { z } from 'zod'
-import { writeFileSync, mkdirSync } from 'fs'
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
 import { prisma } from '../lib/prisma.js'
 import { authenticate, requireInstructor } from '../middleware/auth.js'
 
 const router = Router()
-
-// Chemin vers le dossier uploads (à la racine du backend)
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-const UPLOADS_DIR = join(__dirname, '../../uploads')
-// Créer le dossier s'il n'existe pas encore
-mkdirSync(UPLOADS_DIR, { recursive: true })
 
 // Toutes les routes nécessitent d'être connecté
 router.use(authenticate)
@@ -164,6 +154,7 @@ router.put('/me', async (req, res) => {
 // ---- UPLOAD PHOTO DE PROFIL ----
 // POST /api/users/me/photo
 // Body : { photo: "data:image/jpeg;base64,..." }
+// On stocke le base64 directement en BDD (pas de filesystem — Railway est éphémère)
 router.post('/me/photo', async (req, res) => {
   try {
     const { photo } = req.body
@@ -173,34 +164,29 @@ router.post('/me/photo', async (req, res) => {
       return res.status(400).json({ error: 'Aucune photo reçue.' })
     }
 
-    // Vérifier que c'est bien un JPEG en base64
-    if (!photo.startsWith('data:image/jpeg;base64,') && !photo.startsWith('data:image/jpg;base64,')) {
-      return res.status(400).json({ error: 'Seuls les fichiers JPG/JPEG sont acceptés.' })
+    // Vérifier que c'est bien une image en base64 (JPEG, PNG, WebP, GIF)
+    const validPrefixes = [
+      'data:image/jpeg;base64,',
+      'data:image/jpg;base64,',
+      'data:image/png;base64,',
+      'data:image/webp;base64,',
+      'data:image/gif;base64,',
+    ]
+    if (!validPrefixes.some(p => photo.startsWith(p))) {
+      return res.status(400).json({ error: 'Format non supporté. Utilise JPG, PNG ou WebP.' })
     }
 
-    // Extraire la partie base64 pure (sans le préfixe "data:image/jpeg;base64,")
-    const base64Data = photo.split(',')[1]
-
     // Vérification de la taille (~15 Mo max ; base64 est ~33% plus grand que le fichier réel)
+    const base64Data = photo.split(',')[1]
     const sizeInBytes = Buffer.byteLength(base64Data, 'base64')
     if (sizeInBytes > 15 * 1024 * 1024) {
       return res.status(400).json({ error: 'La photo dépasse la limite de 15 Mo.' })
     }
 
-    // Nom de fichier unique basé sur l'ID user + timestamp
-    const filename = `user-${req.user.id}-${Date.now()}.jpg`
-    const filepath = join(UPLOADS_DIR, filename)
-
-    // Écrire le fichier sur le disque
-    writeFileSync(filepath, base64Data, 'base64')
-
-    // Chemin accessible via HTTP
-    const photoUrl = `/uploads/${filename}`
-
-    // Mettre à jour la BDD
+    // Stocker le data URL base64 directement en BDD (persistant, pas dépendant du filesystem)
     const updated = await prisma.user.update({
       where: { id: req.user.id },
-      data: { photoUrl },
+      data: { photoUrl: photo },
       select: {
         id: true,
         name: true,

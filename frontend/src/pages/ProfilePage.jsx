@@ -55,8 +55,8 @@ export default function ProfilePage() {
     const file = e.target.files?.[0]
     setPhotoError(null)
     if (!file) return
-    if (file.type !== 'image/jpeg') {
-      setPhotoError('Seuls les fichiers JPG/JPEG sont acceptés.')
+    if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
+      setPhotoError('Formats acceptés : JPG, PNG, WebP.')
       return
     }
     if (file.size > 15 * 1024 * 1024) {
@@ -142,7 +142,7 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            <input ref={fileInputRef} type="file" accept=".jpg,.jpeg,image/jpeg"
+            <input ref={fileInputRef} type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
               className="hidden" onChange={handleFileChange} />
 
             {selectedFile ? (
@@ -165,7 +165,7 @@ export default function ProfilePage() {
             )}
 
             {photoError && <p className="text-xs text-red-400 text-center max-w-[140px]">{photoError}</p>}
-            <p className="text-xs text-white/40 text-center max-w-[130px]">JPG uniquement · 15 Mo max</p>
+            <p className="text-xs text-white/40 text-center max-w-[130px]">JPG, PNG, WebP · 15 Mo max</p>
           </div>
 
           {/* ---- Infos + Formulaire ---- */}
