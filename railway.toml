@@ -1,6 +1,6 @@
 [build]
 builder = "NIXPACKS"
-buildCommand = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend && cd backend && npx prisma generate"
+buildCommand = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend && cd backend && npx prisma generate && npx prisma db push"
 
 [deploy]
-startCommand = "cd backend && npx prisma db push; cd .. && node backend/src/index.js"
+startCommand = "node backend/src/index.js"
