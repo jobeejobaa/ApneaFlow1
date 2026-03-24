@@ -29,8 +29,10 @@ import CoursesPage      from './pages/CoursesPage'
 import CalendarPage     from './pages/CalendarPage'
 import CreateCoursePage  from './pages/CreateCoursePage'
 import ProfilePage       from './pages/ProfilePage'
-import InstructeursPage  from './pages/InstructeursPage'
-import RequestsPage      from './pages/RequestsPage'
+import InstructeursPage    from './pages/InstructeursPage'
+import RequestsPage        from './pages/RequestsPage'
+import MentionsLegalesPage from './pages/MentionsLegalesPage'
+import RgpdPage            from './pages/RgpdPage'
 
 // ---- COMPOSANT ROUTE LANDING (intelligente) ----
 // Affiche LandingPage si non connecté, redirige vers /dashboard si connecté
@@ -84,8 +86,10 @@ export default function App() {
       {/* Page d'accueil publique — smart : redirige vers /dashboard si connecté */}
       <Route path="/" element={<LandingRoute />} />
 
-      {/* Route publique */}
-      <Route path="/login" element={<AuthPage />} />
+      {/* Routes publiques */}
+      <Route path="/login"            element={<AuthPage />} />
+      <Route path="/mentions-legales" element={<MentionsLegalesPage />} />
+      <Route path="/rgpd"             element={<RgpdPage />} />
 
       {/* Routes protégées — nécessitent d'être connecté */}
       <Route path="/dashboard" element={

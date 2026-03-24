@@ -17,6 +17,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Waves, ChevronLeft, ChevronRight, Anchor, Wind, Users } from 'lucide-react'
 import { useLang } from '../hooks/useLang'
+import Footer from '../components/layout/Footer'
 
 // ---- Toggle langue (dupliqué ici car la Navbar complète n'est pas chargée) ----
 function LangToggle() {
@@ -270,6 +271,7 @@ export default function LandingPage() {
           </section>
 
         </main>
+        <Footer />
       </div>
     </div>
   )

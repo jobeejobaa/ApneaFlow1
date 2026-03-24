@@ -4,6 +4,7 @@
 // ============================================================
 import { useEffect, useRef } from 'react'
 import Navbar from './Navbar'
+import Footer from './Footer'
 
 export default function Layout({ children }) {
   const bubblesRef = useRef(null)
@@ -45,6 +46,7 @@ export default function Layout({ children }) {
         <main className="max-w-7xl mx-auto px-6 py-8">
           {children}
         </main>
+        <Footer />
       </div>
     </div>
   )
