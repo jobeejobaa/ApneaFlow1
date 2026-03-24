@@ -16,8 +16,10 @@ import { useToast } from '../hooks/useToast'
 import { usersAPI } from '../services/api'
 import { useLang } from '../hooks/useLang'
 import { CourseName, Location, formatDate } from '../utils/labels'
+import { useMeta } from '../hooks/useMeta'
 
 export default function ProfilePage() {
+  useMeta('Mon profil', 'Gérez votre profil Apnea Flow : informations personnelles, photo et historique de cours.')
   const { user, logout, updateUser } = useAuth()
   const { addToast } = useToast()
   const { t } = useLang()

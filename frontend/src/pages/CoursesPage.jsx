@@ -13,8 +13,10 @@ import { useToast } from '../hooks/useToast'
 import { coursesAPI } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
 import { useLang } from '../hooks/useLang'
+import { useMeta } from '../hooks/useMeta'
 
 export default function CoursesPage() {
+  useMeta('Cours', 'Parcourez tous les cours d\'apnée disponibles : initiation, AIDA1, AIDA2, AIDA3, AIDA4 et plus.')
   const [filters, setFilters] = useState({ level: 'all', location: 'all' })
   const [selectedCourse, setSelectedCourse] = useState(null) // cours pour le modal
 

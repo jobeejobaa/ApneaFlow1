@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useLang } from '../hooks/useLang'
 import { useToast } from '../hooks/useToast'
 import { CourseName, Location, formatDate } from '../utils/labels'
+import { useMeta } from '../hooks/useMeta'
 
 // ---- Badge de statut ----
 function StatusBadge({ status }) {
@@ -126,6 +127,7 @@ function RequestCard({ request, isInstructor, onRespond }) {
 // Composant principal
 // ============================================================
 export default function RequestsPage() {
+  useMeta('Demandes de cours', 'Envoyez ou gérez vos demandes de cours privés entre élèves et instructeurs d\'apnée.')
   const { user } = useAuth()
   const { addToast } = useToast()
   const isInstructor = user?.role === 'INSTRUCTEUR'

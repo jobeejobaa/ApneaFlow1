@@ -11,8 +11,10 @@ import { useCourses } from '../hooks/useCourses'
 import { useEnrollments } from '../hooks/useEnrollments'
 import { formatDate } from '../utils/labels'
 import { useLang } from '../hooks/useLang'
+import { useMeta } from '../hooks/useMeta'
 
 export default function CalendarPage() {
+  useMeta('Calendrier', 'Visualisez vos cours d\'apnée en calendrier mensuel et gérez votre planning de formation.')
   const [selectedDate, setSelectedDate] = useState(null)
   const [selectedDayCourses, setSelectedDayCourses] = useState([])
   const [courseForModal, setCourseForModal] = useState(null)

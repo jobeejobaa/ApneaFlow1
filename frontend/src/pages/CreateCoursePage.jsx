@@ -8,6 +8,7 @@ import Button from '../components/ui/Button'
 import { coursesAPI } from '../services/api'
 import { useToast } from '../hooks/useToast'
 import { useLang } from '../hooks/useLang'
+import { useMeta } from '../hooks/useMeta'
 
 // Champ de formulaire réutilisable
 function Field({ label, hint, children }) {
@@ -21,6 +22,7 @@ function Field({ label, hint, children }) {
 }
 
 export default function CreateCoursePage() {
+  useMeta('Créer un cours', 'Créez et publiez un nouveau cours d\'apnée pour vos élèves sur Apnea Flow.')
   const navigate = useNavigate()
   const { addToast } = useToast()
   const { t } = useLang()

@@ -4,8 +4,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import OceanBackground from '../components/ui/OceanBackground'
+import { useMeta } from '../hooks/useMeta'
 
 export default function MentionsLegalesPage() {
+  useMeta('Mentions légales', 'Mentions légales d\'Apnea Flow — éditeur, hébergement et propriété intellectuelle.')
   return (
     <OceanBackground>
       <div className="max-w-3xl mx-auto px-6 py-12">

@@ -19,6 +19,7 @@ import { Waves, ChevronLeft, ChevronRight, Anchor, Wind, Users } from 'lucide-re
 import { useLang } from '../hooks/useLang'
 import Footer from '../components/layout/Footer'
 import OceanBackground from '../components/ui/OceanBackground'
+import { useMeta } from '../hooks/useMeta'
 
 // ---- Toggle langue (dupliqué ici car la Navbar complète n'est pas chargée) ----
 function LangToggle() {
@@ -69,6 +70,7 @@ const FEATURES = [
 ]
 
 export default function LandingPage() {
+  useMeta('Accueil', "Apnea Flow — Trouvez un instructeur d'apnée certifié AIDA, inscrivez-vous à des cours et progressez en apnée libre.")
   const [currentSlide, setCurrentSlide] = useState(0)
   const [imgError, setImgError]         = useState({})
   const { t } = useLang()

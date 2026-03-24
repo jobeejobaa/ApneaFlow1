@@ -9,6 +9,7 @@ import { useEnrollments } from '../hooks/useEnrollments'
 import { useCourses } from '../hooks/useCourses'
 import Badge from '../components/ui/Badge'
 import Spinner from '../components/ui/Spinner'
+import { useMeta } from '../hooks/useMeta'
 
 function StatCard({ icon: Icon, value, label, color }) {
   return (
@@ -55,6 +56,7 @@ function EnrollmentItem({ enrollment }) {
 }
 
 export default function DashboardPage() {
+  useMeta('Tableau de bord', 'Votre espace Apnea Flow — suivez vos inscriptions, cours à venir et activités.')
   const { user } = useAuth()
   const { t } = useLang()
   const { enrollments, loading: loadingEnroll } = useEnrollments()

@@ -9,6 +9,7 @@ import { useToast } from '../hooks/useToast'
 import { useLang } from '../hooks/useLang'
 import Button from '../components/ui/Button'
 import OceanBackground from '../components/ui/OceanBackground'
+import { useMeta } from '../hooks/useMeta'
 
 // Toggle langue sur la page auth (pas de Navbar ici)
 function AuthLangToggle() {
@@ -25,6 +26,7 @@ function AuthLangToggle() {
 }
 
 export default function AuthPage() {
+  useMeta('Connexion', 'Connectez-vous ou créez votre compte Apnea Flow pour accéder à vos cours d\'apnée.')
   // Si l'URL contient ?mode=register, on ouvre directement l'onglet inscription
   const [searchParams] = useSearchParams()
   const [mode, setMode] = useState(

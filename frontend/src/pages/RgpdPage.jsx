@@ -4,8 +4,10 @@
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import OceanBackground from '../components/ui/OceanBackground'
+import { useMeta } from '../hooks/useMeta'
 
 export default function RgpdPage() {
+  useMeta('Politique de confidentialité', 'Politique de confidentialité RGPD d\'Apnea Flow — données collectées, droits et cookies.')
   return (
     <OceanBackground>
       <div className="max-w-3xl mx-auto px-6 py-12">

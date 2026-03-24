@@ -17,6 +17,7 @@ import { useToast } from '../hooks/useToast'
 import { useLang } from '../hooks/useLang'
 import { CourseName, Location } from '../utils/labels'
 import { formatDate } from '../utils/labels'
+import { useMeta } from '../hooks/useMeta'
 
 // Options pour le formulaire de demande
 const LEVELS = ['INITIATION', 'AIDA1', 'AIDA2', 'AIDA3', 'AIDA4', 'AIDA_INSTRUCTEUR']
@@ -170,6 +171,7 @@ function RequestModal({ instructor, onClose, onSuccess }) {
 // Composant principal
 // ============================================================
 export default function InstructeursPage() {
+  useMeta('Instructeurs', 'Découvrez tous les instructeurs d\'apnée certifiés AIDA disponibles sur Apnea Flow.')
   const { t } = useLang()
   const { user } = useAuth()
   const isEleve = user?.role === 'ELEVE'
