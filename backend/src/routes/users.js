@@ -176,11 +176,11 @@ router.post('/me/photo', async (req, res) => {
       return res.status(400).json({ error: 'Format non supporté. Utilise JPG, PNG ou WebP.' })
     }
 
-    // Vérification de la taille (~15 Mo max ; base64 est ~33% plus grand que le fichier réel)
+    // Vérification de la taille (~25 Mo max ; base64 est ~33% plus grand que le fichier réel)
     const base64Data = photo.split(',')[1]
     const sizeInBytes = Buffer.byteLength(base64Data, 'base64')
-    if (sizeInBytes > 15 * 1024 * 1024) {
-      return res.status(400).json({ error: 'La photo dépasse la limite de 15 Mo.' })
+    if (sizeInBytes > 25 * 1024 * 1024) {
+      return res.status(400).json({ error: 'La photo dépasse la limite de 25 Mo.' })
     }
 
     // Stocker le data URL base64 directement en BDD (persistant, pas dépendant du filesystem)
