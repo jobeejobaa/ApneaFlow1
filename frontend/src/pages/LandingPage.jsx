@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom'
 import { Waves, ChevronLeft, ChevronRight, Anchor, Wind, Users } from 'lucide-react'
 import { useLang } from '../hooks/useLang'
 import Footer from '../components/layout/Footer'
+import OceanBackground from '../components/ui/OceanBackground'
 
 // ---- Toggle langue (dupliqué ici car la Navbar complète n'est pas chargée) ----
 function LangToggle() {
