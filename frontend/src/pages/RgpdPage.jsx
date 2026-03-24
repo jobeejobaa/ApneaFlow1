@@ -3,10 +3,11 @@
 // ============================================================
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import OceanBackground from '../components/ui/OceanBackground'
 
 export default function RgpdPage() {
   return (
-    <div className="ocean-bg min-h-screen text-slate-100">
+    <OceanBackground>
       <div className="max-w-3xl mx-auto px-6 py-12">
 
         {/* Retour */}
@@ -139,6 +140,6 @@ export default function RgpdPage() {
         </p>
 
       </div>
-    </div>
+    </OceanBackground>
   )
 }

@@ -96,15 +96,8 @@ export default function LandingPage() {
   const hasImage = !imgError[slide.id]
 
   return (
-    <div className="ocean-bg">
-      {/* Fond animé vagues + bulles */}
-      <div className="waves">
-        <div className="wave" />
-        <div className="wave" />
-        <div className="wave" />
-      </div>
-
-      <div className="relative z-10 min-h-screen flex flex-col">
+    <OceanBackground>
+      <div className="min-h-screen flex flex-col">
 
         {/* ── Navbar publique ── */}
         <nav className="glass-panel sticky top-0 z-40 px-6 py-4">
@@ -273,6 +266,6 @@ export default function LandingPage() {
         </main>
         <Footer />
       </div>
-    </div>
+    </OceanBackground>
   )
 }

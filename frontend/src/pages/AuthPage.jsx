@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
 import { useLang } from '../hooks/useLang'
 import Button from '../components/ui/Button'
+import OceanBackground from '../components/ui/OceanBackground'
 
 // Toggle langue sur la page auth (pas de Navbar ici)
 function AuthLangToggle() {
@@ -71,10 +72,8 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="ocean-bg min-h-screen flex items-center justify-center p-4">
-      <div className="waves"><div className="wave" /><div className="wave" /><div className="wave" /></div>
-
-      <div className="glass-panel rounded-3xl p-8 w-full max-w-md animate-fade-in relative z-10">
+    <OceanBackground className="flex items-center justify-center p-4">
+      <div className="glass-panel rounded-3xl p-8 w-full max-w-md animate-fade-in">
         {/* Toggle langue */}
         <AuthLangToggle />
 
@@ -148,6 +147,6 @@ export default function AuthPage() {
           </form>
         )}
       </div>
-    </div>
+    </OceanBackground>
   )
 }
