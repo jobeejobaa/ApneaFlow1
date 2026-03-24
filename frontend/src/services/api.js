@@ -15,6 +15,11 @@
 // Récupérer le token JWT depuis le localStorage
 const getToken = () => localStorage.getItem('apnea_token')
 
+// URL de base de l'API :
+// - En dev  : '' (vide) → le proxy Vite redirige /api → localhost:3001
+// - En prod : l'URL Railway définie dans VITE_API_URL (ex: https://monapp.railway.app)
+const API_BASE = import.meta.env.VITE_API_URL || ''
+
 // ---- FONCTION DE BASE ----
 // Toutes les requêtes passent par ici
 async function apiFetch(endpoint, options = {}) {
@@ -30,7 +35,7 @@ async function apiFetch(endpoint, options = {}) {
     headers['Authorization'] = `Bearer ${token}`
   }
 
-  const response = await fetch(`/api${endpoint}`, {
+  const response = await fetch(`${API_BASE}/api${endpoint}`, {
     ...options,
     headers,
   })
