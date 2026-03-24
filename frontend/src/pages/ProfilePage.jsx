@@ -57,8 +57,8 @@ export default function ProfilePage() {
       setPhotoError('Seuls les fichiers JPG/JPEG sont acceptés.')
       return
     }
-    if (file.size > 5 * 1024 * 1024) {
-      setPhotoError('La photo dépasse 5 Mo.')
+    if (file.size > 15 * 1024 * 1024) {
+      setPhotoError('La photo dépasse 15 Mo.')
       return
     }
     setSelectedFile(file)
@@ -163,7 +163,7 @@ export default function ProfilePage() {
             )}
 
             {photoError && <p className="text-xs text-red-400 text-center max-w-[140px]">{photoError}</p>}
-            <p className="text-xs text-white/40 text-center max-w-[130px]">JPG uniquement · 5 Mo max</p>
+            <p className="text-xs text-white/40 text-center max-w-[130px]">JPG uniquement · 15 Mo max</p>
           </div>
 
           {/* ---- Infos + Formulaire ---- */}

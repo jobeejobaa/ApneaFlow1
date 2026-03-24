@@ -181,10 +181,10 @@ router.post('/me/photo', async (req, res) => {
     // Extraire la partie base64 pure (sans le préfixe "data:image/jpeg;base64,")
     const base64Data = photo.split(',')[1]
 
-    // Vérification de la taille (~5 Mo max ; base64 est ~33% plus grand que le fichier réel)
+    // Vérification de la taille (~15 Mo max ; base64 est ~33% plus grand que le fichier réel)
     const sizeInBytes = Buffer.byteLength(base64Data, 'base64')
-    if (sizeInBytes > 5 * 1024 * 1024) {
-      return res.status(400).json({ error: 'La photo dépasse la limite de 5 Mo.' })
+    if (sizeInBytes > 15 * 1024 * 1024) {
+      return res.status(400).json({ error: 'La photo dépasse la limite de 15 Mo.' })
     }
 
     // Nom de fichier unique basé sur l'ID user + timestamp

@@ -40,8 +40,8 @@ app.use(cors({
   credentials: true,
 }))
 
-// Parse le body JSON des requêtes
-app.use(express.json())
+// Parse le body JSON des requêtes (limite à 25 Mo pour les photos base64)
+app.use(express.json({ limit: '25mb' }))
 
 // Log basique de chaque requête (utile pour débugger)
 app.use((req, res, next) => {
