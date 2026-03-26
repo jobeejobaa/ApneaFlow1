@@ -15,8 +15,7 @@ import { usersAPI, requestsAPI } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
 import { useToast } from '../hooks/useToast'
 import { useLang } from '../hooks/useLang'
-import { CourseName, Location } from '../utils/labels'
-import { formatDate } from '../utils/labels'
+import { CourseName, Location, formatDate } from '../utils/labels'
 import { useMeta } from '../hooks/useMeta'
 
 // Options pour le formulaire de demande

@@ -5,11 +5,10 @@
 // Vue INSTRUCTEUR: demandes reçues + boutons Accepter / Refuser
 // ============================================================
 import { useState, useEffect, useCallback } from 'react'
-import { MessageSquare, Check, X, Clock, MapPin, Calendar, Clock3, BookOpen } from 'lucide-react'
+import { MessageSquare, Check, X, MapPin, Calendar, Clock3, BookOpen } from 'lucide-react'
 import Spinner from '../components/ui/Spinner'
 import { requestsAPI } from '../services/api'
 import { useAuth } from '../hooks/useAuth'
-import { useLang } from '../hooks/useLang'
 import { useToast } from '../hooks/useToast'
 import { CourseName, Location, formatDate } from '../utils/labels'
 import { useMeta } from '../hooks/useMeta'
