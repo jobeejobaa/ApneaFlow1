@@ -26,15 +26,15 @@ const courseSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
   time: z.string().regex(/^\d{2}:\d{2}$/, 'Format d\'heure invalide (HH:MM)'),
   location: z.enum(['PISCINE', 'MER', 'BLUE_HOLE']),
-  type: z.enum([
+  types: z.array(z.enum([
     'STATIQUE',
     'DYNAMIQUE_PALMES_OU_SANS_PALMES',
     'PROFONDEUR_PALMES_OU_SANS_PALMES',
     'IMMERSION_LIBRE',
     'POIDS_VARIABLE',
     'NO_LIMITS',
-  ]),
-  capacity: z.number().int().min(1).max(10).optional().default(4),
+  ])).min(1, 'Sélectionne au moins un type de cours'),
+  capacity: z.number().int().min(1).max(4).optional().default(4),
 })
 
 // ---- LISTE DES COURS ----

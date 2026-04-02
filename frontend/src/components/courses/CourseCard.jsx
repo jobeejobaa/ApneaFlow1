@@ -63,11 +63,15 @@ export default function CourseCard({ course, isEnrolled, onEnroll, onDelete }) {
         </div>
       </div>
 
-      {/* Titre + description */}
+      {/* Titre + description — types est maintenant un tableau */}
       <h3 className="text-xl font-serif font-bold mb-2">
-        {t(`courseTypes.${course.type}`) !== `[courseTypes.${course.type}]`
-          ? t(`courseTypes.${course.type}`)
-          : (CourseType[course.type] ?? course.type)
+        {(course.types ?? [course.type])
+          .map(tp =>
+            t(`courseTypes.${tp}`) !== `[courseTypes.${tp}]`
+              ? t(`courseTypes.${tp}`)
+              : (CourseType[tp] ?? tp)
+          )
+          .join(' · ')
         }
       </h3>
       <p className="text-cyan-200 text-sm mb-4 flex-grow line-clamp-2">

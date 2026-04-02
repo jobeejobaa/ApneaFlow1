@@ -21,6 +21,16 @@ function Field({ label, hint, children }) {
   )
 }
 
+// Liste des types de cours disponibles
+const COURSE_TYPES = [
+  { value: 'STATIQUE',                         label: 'Statique' },
+  { value: 'DYNAMIQUE_PALMES_OU_SANS_PALMES',  label: 'Dynamique' },
+  { value: 'PROFONDEUR_PALMES_OU_SANS_PALMES', label: 'Profondeur' },
+  { value: 'IMMERSION_LIBRE',                  label: 'Immersion libre' },
+  { value: 'POIDS_VARIABLE',                   label: 'Poids variable' },
+  { value: 'NO_LIMITS',                        label: 'No Limits' },
+]
+
 export default function CreateCoursePage() {
   useMeta('Créer un cours', 'Créez et publiez un nouveau cours d\'apnée pour vos élèves sur Apnea Flow.')
   const navigate = useNavigate()
@@ -37,12 +47,27 @@ export default function CreateCoursePage() {
     date: today,
     time: '10:00',
     location: 'PISCINE',
-    type: 'STATIQUE',
+    types: ['STATIQUE'],   // tableau (multi-sélection)
     capacity: 4,
   })
 
-  // Mise à jour générique d'un champ
+  // Mise à jour générique d'un champ simple
   const set = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
+
+  // Cocher / décocher un type de cours
+  // Règle : au moins 1 type doit rester sélectionné
+  const toggleType = (typeValue) => {
+    setForm(prev => {
+      const isSelected = prev.types.includes(typeValue)
+      if (isSelected && prev.types.length === 1) return prev  // on garde au moins 1
+      return {
+        ...prev,
+        types: isSelected
+          ? prev.types.filter(t => t !== typeValue)
+          : [...prev.types, typeValue],
+      }
+    })
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -70,6 +95,8 @@ export default function CreateCoursePage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+
+          {/* Niveau du cours */}
           <Field label={t('create.level')}>
             <select value={form.title} onChange={set('title')} className="ocean-input w-full px-4 py-3 rounded-xl" required>
               <option value="INITIATION">{t('courseNames.INITIATION')}</option>
@@ -81,6 +108,7 @@ export default function CreateCoursePage() {
             </select>
           </Field>
 
+          {/* Date + Heure */}
           <div className="grid grid-cols-2 gap-4">
             <Field label={t('create.date')}>
               <input type="date" value={form.date} onChange={set('date')} className="ocean-input w-full px-4 py-3 rounded-xl" required />
@@ -90,25 +118,43 @@ export default function CreateCoursePage() {
             </Field>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Field label={t('create.location')}>
-              <select value={form.location} onChange={set('location')} className="ocean-input w-full px-4 py-3 rounded-xl" required>
-                <option value="PISCINE">{t('locations.PISCINE')}</option>
-                <option value="MER">{t('locations.MER')}</option>
-                <option value="BLUE_HOLE">{t('locations.BLUE_HOLE')}</option>
-              </select>
-            </Field>
-            <Field label={t('create.type')}>
-              <select value={form.type} onChange={set('type')} className="ocean-input w-full px-4 py-3 rounded-xl" required>
-                <option value="STATIQUE">{t('courseTypes.STATIQUE')}</option>
-                <option value="DYNAMIQUE_PALMES_OU_SANS_PALMES">{t('courseTypes.DYNAMIQUE_PALMES_OU_SANS_PALMES')}</option>
-                <option value="PROFONDEUR_PALMES_OU_SANS_PALMES">{t('courseTypes.PROFONDEUR_PALMES_OU_SANS_PALMES')}</option>
-                <option value="IMMERSION_LIBRE">{t('courseTypes.IMMERSION_LIBRE')}</option>
-                <option value="POIDS_VARIABLE">{t('courseTypes.POIDS_VARIABLE')}</option>
-                <option value="NO_LIMITS">{t('courseTypes.NO_LIMITS')}</option>
-              </select>
-            </Field>
-          </div>
+          {/* Lieu */}
+          <Field label={t('create.location')}>
+            <select value={form.location} onChange={set('location')} className="ocean-input w-full px-4 py-3 rounded-xl" required>
+              <option value="PISCINE">{t('locations.PISCINE')}</option>
+              <option value="MER">{t('locations.MER')}</option>
+              <option value="BLUE_HOLE">{t('locations.BLUE_HOLE')}</option>
+            </select>
+          </Field>
+
+          {/* ---- TYPE DE COURS — Checkboxes multi-sélection ---- */}
+          <Field label={t('create.type')} hint="Sélectionne un ou plusieurs types de pratique">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {COURSE_TYPES.map(({ value, label }) => {
+                const isChecked = form.types.includes(value)
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => toggleType(value)}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
+                      isChecked
+                        ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200'
+                        : 'border-white/10 bg-white/5 text-slate-400 hover:border-white/25 hover:text-slate-300'
+                    }`}
+                  >
+                    {/* Case à cocher personnalisée */}
+                    <div className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 border transition-all ${
+                      isChecked ? 'bg-cyan-400 border-cyan-400' : 'border-slate-500'
+                    }`}>
+                      {isChecked && <Check className="w-3 h-3 text-slate-900" />}
+                    </div>
+                    {label}
+                  </button>
+                )
+              })}
+            </div>
+          </Field>
 
           {/* Descriptions bilingues côte à côte */}
           <div>
@@ -140,14 +186,25 @@ export default function CreateCoursePage() {
             </div>
           </div>
 
-          {/* Info places — fixé à 4 */}
-          <div className="flex items-center justify-between p-4 rounded-xl bg-white/5">
-            <div>
-              <div className="font-medium">{t('create.capacity')}</div>
-              <div className="text-sm text-cyan-200">{t('create.capacityHint')}</div>
+          {/* ---- NOMBRE D'ÉLÈVES — Sélecteur 1 à 4 ---- */}
+          <Field label={t('create.capacity')} hint={t('create.capacityHint')}>
+            <div className="flex gap-3">
+              {[1, 2, 3, 4].map(n => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setForm(prev => ({ ...prev, capacity: n }))}
+                  className={`w-12 h-12 rounded-xl font-bold text-lg transition-all ${
+                    form.capacity === n
+                      ? 'bg-cyan-500 text-slate-900 shadow-lg shadow-cyan-500/30'
+                      : 'bg-white/5 border border-white/10 text-slate-400 hover:border-cyan-400/50 hover:text-slate-200'
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
             </div>
-            <div className="text-2xl font-bold text-cyan-400">4</div>
-          </div>
+          </Field>
 
           <Button type="submit" variant="gradient" loading={loading} className="w-full py-4">
             <Check className="w-5 h-5" /> {t('create.submit')}

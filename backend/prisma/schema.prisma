@@ -82,8 +82,8 @@ model Course {
   date          String                         // Format YYYY-MM-DD (ex: "2026-03-20")
   time        String                         // Format HH:MM (ex: "10:00")
   location    Location
-  type        CourseType
-  capacity    Int        @default(4)         // Max 4 élèves par cours
+  types       CourseType[]                   // Un ou plusieurs types de pratique
+  capacity    Int        @default(4)         // Max 4 élèves par cours (1 à 4)
   createdById String                         // Clé étrangère vers User
 
   createdAt DateTime @default(now())
