@@ -23,8 +23,10 @@ const courseSchema = z.object({
   title: z.enum(['INITIATION', 'AIDA1', 'AIDA2', 'AIDA3', 'AIDA4', 'AIDA_INSTRUCTEUR']),
   descriptionFr: z.string().max(1000).optional(),
   descriptionEn: z.string().max(1000).optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
-  time: z.string().regex(/^\d{2}:\d{2}$/, 'Format d\'heure invalide (HH:MM)'),
+  sessions: z.array(z.object({
+    date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Format de date invalide (YYYY-MM-DD)'),
+    time: z.string().regex(/^\d{2}:\d{2}$/, 'Format d\'heure invalide (HH:MM)'),
+  })).min(1, 'Au moins une date est requise'),
   location: z.enum(['PISCINE', 'MER', 'BLUE_HOLE']),
   types: z.array(z.enum([
     'STATIQUE',
@@ -44,17 +46,12 @@ router.get('/', async (req, res) => {
   try {
     const { level, location, upcoming } = req.query
 
-    // Construire le filtre dynamiquement
+    // Construire le filtre dynamiquement (level + location via Prisma)
     const where = {}
     if (level && level !== 'all') where.title = level
     if (location && location !== 'all') where.location = location
-    if (upcoming === 'true') {
-      // Filtrer les cours à venir (date >= aujourd'hui)
-      const today = new Date().toISOString().split('T')[0]
-      where.date = { gte: today }
-    }
 
-    const courses = await prisma.course.findMany({
+    let courses = await prisma.course.findMany({
       where,
       include: {
         createdBy: {
@@ -69,8 +66,18 @@ router.get('/', async (req, res) => {
         },
         _count: { select: { enrollments: true } },
       },
-      orderBy: [{ date: 'asc' }, { time: 'asc' }],
+      orderBy: { createdAt: 'asc' },
     })
+
+    // Filtre "upcoming" en JS car sessions est un champ JSON (pas filtrable par Prisma)
+    if (upcoming === 'true') {
+      const today = new Date().toISOString().split('T')[0]
+      courses = courses.filter(c =>
+        Array.isArray(c.sessions) && c.sessions.some(s => s.date >= today)
+      )
+      // Trier par date de la première session
+      courses.sort((a, b) => (a.sessions[0]?.date ?? '').localeCompare(b.sessions[0]?.date ?? ''))
+    }
 
     res.json(courses)
   } catch (err) {

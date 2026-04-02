@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { X, Package } from 'lucide-react'
 import Button from '../ui/Button'
 import Badge from '../ui/Badge'
-import { Location, CourseType, formatDateShort } from '../../utils/labels'
+import { Location, CourseType, formatDateShort, firstSession } from '../../utils/labels'
 import { enrollmentsAPI } from '../../services/api'
 import { useToast } from '../../hooks/useToast'
 import { useLang } from '../../hooks/useLang'
@@ -19,6 +19,7 @@ export default function EnrollModal({ course, onClose, onSuccess }) {
   if (!course) return null
 
   const loc = Location[course.location] ?? { label: course.location }
+  const session0 = firstSession(course)
 
   const handleConfirm = async () => {
     setLoading(true)
@@ -57,19 +58,28 @@ export default function EnrollModal({ course, onClose, onSuccess }) {
         <div className="p-4 rounded-xl bg-white/5 mb-4">
           <div className="flex justify-between items-start mb-2">
             <Badge level={course.title} />
-            <span className="text-sm text-cyan-300">{course.time}</span>
+            <span className="text-sm text-cyan-300">{session0.time}</span>
           </div>
           <div className="font-semibold mb-1">
-            {t(`courseTypes.${course.type}`) !== `[courseTypes.${course.type}]`
-              ? t(`courseTypes.${course.type}`)
-              : (CourseType[course.type] ?? course.type)
-            }
+            {(course.types ?? []).map(tp =>
+              t(`courseTypes.${tp}`) !== `[courseTypes.${tp}]`
+                ? t(`courseTypes.${tp}`)
+                : (CourseType[tp] ?? tp)
+            ).join(' · ')}
           </div>
-          <div className="text-sm text-cyan-200">
+          <div className="text-sm text-cyan-200 mb-2">
             {t(`locations.${course.location}`) !== `[locations.${course.location}]`
               ? t(`locations.${course.location}`)
               : loc.label
-            } — {formatDateShort(course.date)}
+            }
+          </div>
+          {/* Liste de toutes les sessions */}
+          <div className="space-y-0.5">
+            {(course.sessions ?? []).map((s, i) => (
+              <div key={i} className="text-xs text-cyan-300">
+                Séance {i + 1} — {formatDateShort(s.date)} à {s.time}
+              </div>
+            ))}
           </div>
         </div>
 

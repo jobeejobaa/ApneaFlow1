@@ -32,18 +32,19 @@ function EnrollmentItem({ enrollment }) {
     <div className="glass rounded-xl p-4 hover:bg-white/10 transition-all">
       <div className="flex justify-between items-start mb-2">
         <Badge level={course.title} />
-        <span className="text-cyan-300 text-xs">{course.time}</span>
+        <span className="text-cyan-300 text-xs">{course.sessions?.[0]?.time}</span>
       </div>
       <h4 className="font-semibold mb-1 text-sm">
-        {t(`courseTypes.${course.type}`) !== `[courseTypes.${course.type}]`
-          ? t(`courseTypes.${course.type}`) : course.type}
+        {(course.types ?? []).map(tp =>
+          t(`courseTypes.${tp}`) !== `[courseTypes.${tp}]` ? t(`courseTypes.${tp}`) : tp
+        ).join(' · ')}
       </h4>
       <div className="flex items-center gap-3 text-xs text-cyan-200">
         <span>
           {t(`locations.${course.location}`) !== `[locations.${course.location}]`
             ? t(`locations.${course.location}`) : course.location}
           {' — '}
-          {new Date(course.date).toLocaleDateString()}
+          {new Date(course.sessions?.[0]?.date).toLocaleDateString()}
         </span>
         {enrollment.withEquipment && (
           <span className="flex items-center gap-1">
@@ -63,7 +64,9 @@ export default function DashboardPage() {
   const { courses } = useCourses()
 
   const today = new Date().toISOString().split('T')[0]
-  const upcoming = enrollments.filter(e => e.course?.date >= today)
+  const upcoming = enrollments.filter(e =>
+    Array.isArray(e.course?.sessions) && e.course.sessions.some(s => s.date >= today)
+  )
 
   return (
     <div className="animate-fade-in">

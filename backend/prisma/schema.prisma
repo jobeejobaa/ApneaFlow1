@@ -79,8 +79,7 @@ model Course {
   title         CourseName                     // Niveau du cours (AIDA1, AIDA2, etc.)
   descriptionFr String?                        // Description en français
   descriptionEn String?                        // Description en anglais
-  date          String                         // Format YYYY-MM-DD (ex: "2026-03-20")
-  time        String                         // Format HH:MM (ex: "10:00")
+  sessions    Json                           // [{ date: "YYYY-MM-DD", time: "HH:MM" }] — au moins 1
   location    Location
   types       CourseType[]                   // Un ou plusieurs types de pratique
   capacity    Int        @default(4)         // Max 4 élèves par cours (1 à 4)

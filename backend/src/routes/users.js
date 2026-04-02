@@ -37,24 +37,24 @@ router.get('/me/instructor-stats', async (req, res) => {
 
     const today = new Date().toISOString().split('T')[0] // "YYYY-MM-DD"
 
-    // 1. Cours à venir (date >= aujourd'hui)
-    const upcomingCourses = await prisma.course.findMany({
-      where: {
-        createdById: req.user.id,
-        date: { gte: today },
-      },
+    // 1. Cours à venir — sessions est un champ JSON, on filtre en JS
+    const allCourses = await prisma.course.findMany({
+      where: { createdById: req.user.id },
       select: {
         id: true,
         title: true,
-        date: true,
-        time: true,
+        sessions: true,
         location: true,
-        type: true,
+        types: true,
         capacity: true,
         _count: { select: { enrollments: true } },
       },
-      orderBy: { date: 'asc' },
     })
+
+    // Garder seulement ceux qui ont au moins une session à venir
+    const upcomingCourses = allCourses
+      .filter(c => Array.isArray(c.sessions) && c.sessions.some(s => s.date >= today))
+      .sort((a, b) => (a.sessions[0]?.date ?? '').localeCompare(b.sessions[0]?.date ?? ''))
 
     // 2. Tous les élèves uniques inscrits à au moins un de ses cours (passés ou futurs)
     const coursesWithStudents = await prisma.course.findMany({

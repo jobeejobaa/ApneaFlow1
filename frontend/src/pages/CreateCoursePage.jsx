@@ -3,7 +3,7 @@
 // ============================================================
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { PlusCircle, Check } from 'lucide-react'
+import { PlusCircle, Check, X, Plus } from 'lucide-react'
 import Button from '../components/ui/Button'
 import { coursesAPI } from '../services/api'
 import { useToast } from '../hooks/useToast'
@@ -44,8 +44,7 @@ export default function CreateCoursePage() {
     title: 'INITIATION',
     descriptionFr: '',
     descriptionEn: '',
-    date: today,
-    time: '10:00',
+    sessions: [{ date: today, time: '10:00' }],  // au moins 1 session
     location: 'PISCINE',
     types: ['STATIQUE'],   // tableau (multi-sélection)
     capacity: 4,
@@ -53,6 +52,35 @@ export default function CreateCoursePage() {
 
   // Mise à jour générique d'un champ simple
   const set = (key) => (e) => setForm(prev => ({ ...prev, [key]: e.target.value }))
+
+  // Mettre à jour une session (date ou time) à l'index i
+  const setSession = (index, field) => (e) => {
+    setForm(prev => {
+      const newSessions = [...prev.sessions]
+      newSessions[index] = { ...newSessions[index], [field]: e.target.value }
+      return { ...prev, sessions: newSessions }
+    })
+  }
+
+  // Ajouter une session (reprend la date de la dernière par défaut)
+  const addSession = () => {
+    setForm(prev => ({
+      ...prev,
+      sessions: [
+        ...prev.sessions,
+        { date: prev.sessions[prev.sessions.length - 1]?.date ?? today, time: '10:00' },
+      ],
+    }))
+  }
+
+  // Supprimer une session (minimum 1 obligatoire)
+  const removeSession = (index) => {
+    if (form.sessions.length <= 1) return
+    setForm(prev => ({
+      ...prev,
+      sessions: prev.sessions.filter((_, i) => i !== index),
+    }))
+  }
 
   // Cocher / décocher un type de cours
   // Règle : au moins 1 type doit rester sélectionné
@@ -108,15 +136,51 @@ export default function CreateCoursePage() {
             </select>
           </Field>
 
-          {/* Date + Heure */}
-          <div className="grid grid-cols-2 gap-4">
-            <Field label={t('create.date')}>
-              <input type="date" value={form.date} onChange={set('date')} className="ocean-input w-full px-4 py-3 rounded-xl" required />
-            </Field>
-            <Field label={t('create.time')}>
-              <input type="time" value={form.time} onChange={set('time')} className="ocean-input w-full px-4 py-3 rounded-xl" required />
-            </Field>
-          </div>
+          {/* ---- SESSIONS — Dates et horaires (multi-dates) ---- */}
+          <Field label="Dates et horaires" hint="Le cours peut se tenir sur plusieurs jours non consécutifs">
+            <div className="space-y-2">
+              {form.sessions.map((session, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  {/* Numéro de séance */}
+                  <span className="text-xs text-slate-500 w-5 text-right flex-shrink-0">{i + 1}.</span>
+                  <input
+                    type="date"
+                    value={session.date}
+                    onChange={setSession(i, 'date')}
+                    className="ocean-input flex-1 px-4 py-3 rounded-xl"
+                    required
+                  />
+                  <input
+                    type="time"
+                    value={session.time}
+                    onChange={setSession(i, 'time')}
+                    className="ocean-input px-4 py-3 rounded-xl w-28"
+                    required
+                  />
+                  {/* Bouton supprimer — masqué si c'est la seule session */}
+                  {form.sessions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeSession(i)}
+                      className="p-2 text-slate-500 hover:text-red-400 transition-colors flex-shrink-0"
+                      title="Supprimer cette date"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              {/* Bouton ajouter une date */}
+              <button
+                type="button"
+                onClick={addSession}
+                className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 text-sm mt-1 transition-colors"
+              >
+                <Plus className="w-4 h-4" /> Ajouter une date
+              </button>
+            </div>
+          </Field>
 
           {/* Lieu */}
           <Field label={t('create.location')}>

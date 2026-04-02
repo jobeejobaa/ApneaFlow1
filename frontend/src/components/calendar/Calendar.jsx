@@ -29,10 +29,16 @@ export default function Calendar({ courses = [], onSelectDate, selectedDate }) {
     })
   }
 
-  // Cours du mois affiché — indexés par date string "YYYY-MM-DD"
+  // Cours du mois — indexés par date de session "YYYY-MM-DD"
+  // Un cours avec plusieurs sessions apparaît sur chacune de ses dates
   const coursesByDate = courses.reduce((acc, course) => {
-    if (!acc[course.date]) acc[course.date] = []
-    acc[course.date].push(course)
+    const sessions = Array.isArray(course.sessions) ? course.sessions : []
+    sessions.forEach(({ date }) => {
+      if (!acc[date]) acc[date] = []
+      if (!acc[date].find(c => c.id === course.id)) {
+        acc[date].push(course)
+      }
+    })
     return acc
   }, {})
 

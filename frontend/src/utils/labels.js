@@ -34,6 +34,13 @@ export const levelBadgeClass = (title) => {
   return `badge-${key}`
 }
 
+// Retourne la première session d'un cours {date, time}
+// Sécurisé : retourne {} si sessions est vide ou absent
+export const firstSession = (course) =>
+  (Array.isArray(course?.sessions) && course.sessions.length > 0)
+    ? course.sessions[0]
+    : {}
+
 // Formater une date ISO en français
 export const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleDateString('fr-FR', {

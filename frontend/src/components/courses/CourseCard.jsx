@@ -4,7 +4,7 @@
 import { Clock, Calendar, User, Check } from 'lucide-react'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
-import { Location, CourseType, formatDateShort } from '../../utils/labels'
+import { Location, CourseType, formatDateShort, firstSession } from '../../utils/labels'
 import { useAuth } from '../../hooks/useAuth'
 import { useLang } from '../../hooks/useLang'
 
@@ -45,6 +45,8 @@ export default function CourseCard({ course, isEnrolled, onEnroll, onDelete }) {
   const enrolled = course._count?.enrollments ?? course.enrollments?.length ?? 0
   const isFull = enrolled >= course.capacity
   const isOwner = course.createdById === user?.id
+  const session0 = firstSession(course)           // première session {date, time}
+  const sessionCount = course.sessions?.length ?? 1
 
   // Icône de lieu (dynamique selon la valeur)
   const LocationIcon = () => {
@@ -59,7 +61,12 @@ export default function CourseCard({ course, isEnrolled, onEnroll, onDelete }) {
         <Badge level={course.title} />
         <div className="flex items-center gap-2 text-cyan-300 text-sm">
           <Clock className="w-4 h-4" />
-          {course.time}
+          {session0.time}
+          {sessionCount > 1 && (
+            <span className="text-xs bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full">
+              {sessionCount} séances
+            </span>
+          )}
         </div>
       </div>
 
@@ -82,7 +89,7 @@ export default function CourseCard({ course, isEnrolled, onEnroll, onDelete }) {
       <div className="space-y-2 mb-4">
         <div className="flex items-center gap-2 text-sm">
           <Calendar className="w-4 h-4 text-cyan-400" />
-          {formatDateShort(course.date)}
+          {formatDateShort(session0.date)}
         </div>
         <div className={`flex items-center gap-2 text-sm ${loc.colorClass}`}>
           <LocationIcon />

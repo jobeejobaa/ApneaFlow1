@@ -370,8 +370,8 @@ export default function InstructeursPage() {
                           {CourseName[course.title] ?? course.title}
                         </p>
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-cyan-200">
-                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatDate(course.date)}</span>
-                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{course.time}</span>
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />{formatDate(course.sessions?.[0]?.date)}</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{course.sessions?.[0]?.time}</span>
                           <span className="flex items-center gap-1"><MapPin className="w-3 h-3" />{Location[course.location]?.label ?? course.location}</span>
                         </div>
                       </div>

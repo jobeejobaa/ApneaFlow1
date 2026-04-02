@@ -266,10 +266,13 @@ export default function ProfilePage() {
                         {/* Infos date / lieu */}
                         <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-cyan-200">
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />{formatDate(course.date)}
+                            <Calendar className="w-3 h-3" />{formatDate(course.sessions?.[0]?.date)}
                           </span>
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3" />{course.time}
+                            <Clock className="w-3 h-3" />{course.sessions?.[0]?.time}
+                            {(course.sessions?.length ?? 1) > 1 && (
+                              <span className="text-cyan-400">({course.sessions.length} séances)</span>
+                            )}
                           </span>
                           <span className="flex items-center gap-1">
                             <MapPin className="w-3 h-3" />{Location[course.location]?.label ?? course.location}

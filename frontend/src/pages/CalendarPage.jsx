@@ -34,7 +34,9 @@ export default function CalendarPage() {
     refetchEnrollments()
     // Mettre à jour la liste du jour sélectionné
     if (selectedDate) {
-      const updated = courses.filter(c => c.date === selectedDate)
+      const updated = courses.filter(c =>
+        Array.isArray(c.sessions) && c.sessions.some(s => s.date === selectedDate)
+      )
       setSelectedDayCourses(updated)
     }
   }
