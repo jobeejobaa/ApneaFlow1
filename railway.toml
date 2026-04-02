@@ -3,4 +3,4 @@ builder = "NIXPACKS"
 buildCommand = "npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend && cd backend && npx prisma generate"
 
 [deploy]
-startCommand = "cd backend && node_modules/.bin/prisma migrate deploy && node src/index.js"
+startCommand = "cd backend && node_modules/.bin/prisma migrate resolve --applied 20260402000321_types_array_capacity; node_modules/.bin/prisma migrate deploy && node src/index.js"
