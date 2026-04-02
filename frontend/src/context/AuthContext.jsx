@@ -19,6 +19,13 @@ import { authAPI } from '../services/api'
 // 1. Créer le contexte (valeur par défaut = null)
 export const AuthContext = createContext(null)
 
+// Helper : sauvegarde l'user SANS photoUrl (base64 trop lourde pour localStorage ~5MB)
+// La photo reste dans le state React en mémoire, pas besoin de la persister
+function saveUserToStorage(userData) {
+  const { photoUrl, ...userWithoutPhoto } = userData
+  localStorage.setItem('apnea_user', JSON.stringify(userWithoutPhoto))
+}
+
 // 2. Provider = composant qui "enveloppe" l'app et fournit le contexte
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
@@ -44,10 +51,9 @@ export function AuthProvider({ children }) {
   // ---- LOGIN ----
   const login = async (email, password) => {
     const res = await authAPI.login(email, password)
-    // Stocker le token et l'user dans localStorage (persiste après rechargement)
     localStorage.setItem('apnea_token', res.token)
-    localStorage.setItem('apnea_user', JSON.stringify(res.user))
-    setUser(res.user)
+    saveUserToStorage(res.user)   // sans photoUrl
+    setUser(res.user)             // avec photoUrl en mémoire
     return res
   }
 
@@ -55,8 +61,8 @@ export function AuthProvider({ children }) {
   const register = async (name, email, password, role) => {
     const res = await authAPI.register(name, email, password, role)
     localStorage.setItem('apnea_token', res.token)
-    localStorage.setItem('apnea_user', JSON.stringify(res.user))
-    setUser(res.user)
+    saveUserToStorage(res.user)   // sans photoUrl
+    setUser(res.user)             // avec photoUrl en mémoire
     return res
   }
 
@@ -71,7 +77,7 @@ export function AuthProvider({ children }) {
   const updateUser = (updatedData) => {
     const newUser = { ...user, ...updatedData }
     setUser(newUser)
-    localStorage.setItem('apnea_user', JSON.stringify(newUser))
+    saveUserToStorage(newUser)    // sans photoUrl
   }
 
   // La valeur fournie à tous les composants enfants
